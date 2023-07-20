@@ -1,61 +1,108 @@
-MODULE STATUS_0002 OUTPUT.
+PROGRAM ZPROJECT_001__.
+TABLES  ZPROJECT001.
+
+DATA: LS_CLIENT TYPE ZPROJECT001,
+      LT_CLIENT TYPE TABLE OF ZPROJECT001.
+
+DATA: OKCODE_002 TYPE SY-UCOMM,
+      REPORTALV  TYPE REF TO CL_SALV_TABLE,
+      FUNCTIONS  TYPE REF TO CL_SALV_FUNCTIONS.
+
+  MODULE STATUS_0002 OUTPUT.
+
+*   SET PF-STATUS 'xxxxxxxx'.
+*   SET TITLEBAR 'xxx'.
+
+    DATA: OKCODE_001 TYPE SY-UCOMM,
+          IN1        TYPE KUNNR,
+          IN2        TYPE NAME1_GP,
+          I          TYPE INT1.
+
+  ENDMODULE.
+*  &---------------------------------------------------------------------*
+*  &      Module  USER_COMMAND_0002  INPUT
+*  &---------------------------------------------------------------------*
+*         text
+*  ----------------------------------------------------------------------*
+
+  MODULE USER_COMMAND_0002 INPUT.
+
+    IF OKCODE_001 EQ 'FCT_EXIT'.
+      LEAVE PROGRAM.
+    ENDIF.
+
+      IF OKCODE_001 EQ 'FCT_ENTER'.
+        I = I + 1.
+        IF IN1 EQ '1234567890' AND IN2 EQ 'RAFAEL001'.
+          CALL SCREEN '3'.
+        ELSEIF IN1 EQ '2345678901' AND IN2 EQ 'RAFAEL002'.
+          CALL SCREEN '3'.
+        ELSE.
+          MESSAGE 'Combinação inválida de login e senha.' TYPE 'S' DISPLAY LIKE 'E'.
+          IF I >= 3.
+            LEAVE PROGRAM.
+          ENDIF.
+        ENDIF.
+
+      ENDIF.
+
+  ENDMODULE.
+
+*&---------------------------------------------------------------------*
+*& Module STATUS_0003 OUTPUT
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+MODULE STATUS_0003 OUTPUT.
+
 * SET PF-STATUS 'xxxxxxxx'.
 * SET TITLEBAR 'xxx'.
 
-  DATA: OKCODE_001 TYPE SY-UCOMM,
-        OKCODE_002 TYPE SY-UCOMM,
-        IN1        TYPE KUNNR,
-        IN2        TYPE NAME1_GP,
-        I          TYPE INT1.
+  DATA: INP1 TYPE KUNNR,
+        INP2 TYPE NAME1_GP,
+        INP3 TYPE NAME2_GP,
+        INP4 TYPE ORT01_GP,
+        INP5 TYPE TELF1.
+
+  LS_CLIENT-CLINUM  = INP1.
+  LS_CLIENT-NAME1   = INP2.
+  LS_CLIENT-NAME2   = INP3.
+  LS_CLIENT-ADDRESS = INP4.
+  LS_CLIENT-PHONE   = INP5.
 
 ENDMODULE.
-*&---------------------------------------------------------------------*
-*&      Module  USER_COMMAND_0002  INPUT
-*&---------------------------------------------------------------------*
-*       text
-*----------------------------------------------------------------------*
 
-MODULE USER_COMMAND_0002 INPUT.
+*  &---------------------------------------------------------------------*
+*  &      Module  USER_COMMAND_0003  INPUT
+*  &---------------------------------------------------------------------*
+*         text
+*  ----------------------------------------------------------------------*
+  MODULE USER_COMMAND_0003 INPUT.
 
-  I = 0.
-
-  IF OKCODE_001 EQ 'FCT_EXIT'.
-    LEAVE PROGRAM.
-  ENDIF.
-
-  WHILE I < 3.
-    IF OKCODE_001 EQ 'FCT_ENTER'.
-      I = I + 1.
-      IF IN1 EQ '1234567890' AND IN2 EQ 'RAFAEL001'.
-        CALL SCREEN '3'.
-
-      ELSEIF IN1 EQ '2345678901' AND IN2 EQ 'RAFAEL002'.
-        CALL SCREEN '3'.
-
-      ELSE.
-        MESSAGE 'Combinação inválida de login e senha.' TYPE 'S' DISPLAY LIKE 'E'.
-        IF I >= 3.
-          LEAVE PROGRAM.
-        ELSE.
-          MESSAGE 'Você tem mais tentativaS.' TYPE 'S' DISPLAY LIKE 'I'.
-        ENDIF.
-      ENDIF.
-
+    IF OKCODE_002 EQ 'FCT_EXIT2'.
+      LEAVE PROGRAM.
     ENDIF.
 
-  ENDWHILE.
+    IF OKCODE_002 EQ 'FCT_SUBMIT'.
+      APPEND LS_CLIENT TO LT_CLIENT.
+      MODIFY ZPROJECT001 FROM TABLE LT_CLIENT.
+    ENDIF.
 
-ENDMODULE.
+    IF OKCODE_002 EQ 'FCT_DISPLAY'.
 
-*&---------------------------------------------------------------------*
-*&      Module  USER_COMMAND_0003  INPUT
-*&---------------------------------------------------------------------*
-*       text
-*----------------------------------------------------------------------*
-MODULE USER_COMMAND_0003 INPUT.
+      SELECT * FROM ZPROJECT001 INTO TABLE LT_CLIENT.
 
-  IF OKCODE_002 EQ 'FCT_EXIT2'.
-    LEAVE PROGRAM.
-  ENDIF.
+      CALL METHOD CL_SALV_TABLE=>FACTORY
+        IMPORTING
+          R_SALV_TABLE = REPORTALV
+        CHANGING
+          T_TABLE      = LT_CLIENT.
 
-ENDMODULE.
+        FUNCTIONS = REPORTALV->GET_FUNCTIONS( ).
+        FUNCTIONS->SET_ALL( ABAP_TRUE ).
+
+        CALL METHOD REPORTALV->DISPLAY( ).
+
+      ENDIF.
+
+  ENDMODULE.
