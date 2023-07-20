@@ -1,0 +1,58 @@
+PROGRAM ZPROJECT_002__
+
+MODULE STATUS_0002 OUTPUT.
+* SET PF-STATUS 'xxxxxxxx'.
+* SET TITLEBAR 'xxx'.
+
+  DATA: OKCODE_001 TYPE SY-UCOMM,
+        OKCODE_002 TYPE SY-UCOMM,
+        IN1        TYPE KUNNR,
+        IN2        TYPE NAME1_GP,
+        I          TYPE INT1.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0002  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0002 INPUT.
+
+  I = 0.
+
+IF OKCODE_001 EQ 'FCT_ENTER'.
+    WHILE I < 3.
+
+      IF IN1 EQ '1234567890' AND IN2 EQ 'RAFAEL001'.
+        CALL SCREEN '3'.
+        EXIT.
+      ELSEIF IN1 EQ '2345678901' AND IN2 EQ 'RAFAEL002'.
+        CALL SCREEN '3'.
+        EXIT.
+      ELSE.
+        I = I + 1.
+        MESSAGE 'Invalid combination of login and password.' TYPE 'S' DISPLAY LIKE 'E'.
+        IF I >= 3.
+          LEAVE PROGRAM.
+        ELSE.
+          MESSAGE 'You have more attempt(s).' TYPE 'S' DISPLAY LIKE 'I'.
+        ENDIF.
+      ENDIF.
+    ENDWHILE.
+
+  ENDIF.
+
+ENDMODULE.
+
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0003  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0003 INPUT.
+
+  IF OKCODE_002 EQ 'FCT_EXIT2'.
+    LEAVE PROGRAM.
+  ENDIF.
+
+ENDMODULE.
