@@ -1,0 +1,27 @@
+TABLES CREATED.
+
+[TRANSPARENT TABLE -- ZPROJECT001]  
+----------------------------------------------------------------------------------------  
+----------------------------------------------------------------------------------------  
+[FIELD]   [KEY]   [DATA ELEMENT]    [DATA TYPE]    [LENGTH]    [SHORT DESCRIPTION]
+MANDT       X         MANDT            CLNT           3               CLIENT
+CLINUM                KUNNR            CHAR           10              CUSTOMER NUMBER
+NAME1                 NAME1_GP         CHAR           35              NAME1
+NAME2                 NAME2_GP         CHAR           35              NAME2
+ADDRESS               ORT0_GP          CHAR           35              CITY
+PHONE                 TELF1            CHAR           16              FIRST NUMBER
+----------------------------------------------------------------------------------------  
+----------------------------------------------------------------------------------------  
+
+[TRANSPARENT TABLE 2 -- ZPROJECT001_EMP]  
+----------------------------------------------------------------------------------------  
+----------------------------------------------------------------------------------------  
+[FIELD]   [KEY]   [DATA ELEMENT]    [DATA TYPE]    [LENGTH]    [SHORT DESCRIPTION]
+MANDT       X         MANDT            CLNT           3               CLIENT
+IDCODE                KUNNR            CHAR           10              CUSTOMER NUMBER
+NAME1                 NAME1_GP         CHAR           35              NAME1
+----------------------------------------------------------------------------------------  
+----------------------------------------------------------------------------------------  
+
+
+
