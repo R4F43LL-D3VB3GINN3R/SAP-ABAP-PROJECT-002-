@@ -8,45 +8,45 @@ DATA: OKCODE_002 TYPE SY-UCOMM,
       REPORTALV  TYPE REF TO CL_SALV_TABLE,
       FUNCTIONS  TYPE REF TO CL_SALV_FUNCTIONS.
 
-  MODULE STATUS_0002 OUTPUT.
+MODULE STATUS_0002 OUTPUT.
 
 *   SET PF-STATUS 'xxxxxxxx'.
 *   SET TITLEBAR 'xxx'.
 
-    DATA: OKCODE_001 TYPE SY-UCOMM,
-          IN1        TYPE KUNNR,
-          IN2        TYPE NAME1_GP,
-          I          TYPE INT1.
+  DATA: OKCODE_001 TYPE SY-UCOMM,
+        IN1        TYPE KUNNR,
+        IN2        TYPE NAME1_GP,
+        I          TYPE INT1.
 
-  ENDMODULE.
+ENDMODULE.
 *  &---------------------------------------------------------------------*
 *  &      Module  USER_COMMAND_0002  INPUT
 *  &---------------------------------------------------------------------*
 *         text
 *  ----------------------------------------------------------------------*
 
-  MODULE USER_COMMAND_0002 INPUT.
+MODULE USER_COMMAND_0002 INPUT.
 
-    IF OKCODE_001 EQ 'FCT_EXIT'.
-      LEAVE PROGRAM.
-    ENDIF.
-
-      IF OKCODE_001 EQ 'FCT_ENTER'.
-        I = I + 1.
-        IF IN1 EQ '1234567890' AND IN2 EQ 'RAFAEL001'.
-          CALL SCREEN '3'.
-        ELSEIF IN1 EQ '2345678901' AND IN2 EQ 'RAFAEL002'.
-          CALL SCREEN '3'.
+  IF OKCODE_001 EQ 'FCT_EXIT'.
+    LEAVE PROGRAM.
+  ELSE.
+    IF OKCODE_001 EQ 'FCT_ENTER'.
+      I = I + 1.
+      IF IN1 EQ '1234567890' AND IN2 EQ 'RAFAEL001'.
+        CALL SCREEN '3'.
+      ELSEIF IN1 EQ '2345678901' AND IN2 EQ 'RAFAEL002'.
+        CALL SCREEN '3'.
+      ELSE.
+        IF I >= 3.
+          LEAVE PROGRAM.
         ELSE.
-          MESSAGE 'Combinação inválida de login e senha.' TYPE 'S' DISPLAY LIKE 'E'.
-          IF I >= 3.
-            LEAVE PROGRAM.
-          ENDIF.
+          MESSAGE |Combinação Inválida: [Tentativas restantes: { 3 - I }]| TYPE 'S' DISPLAY LIKE 'I'.
         ENDIF.
-
       ENDIF.
+    ENDIF.
+  ENDIF.
 
-  ENDMODULE.
+ENDMODULE.
 
 *&---------------------------------------------------------------------*
 *& Module STATUS_0003 OUTPUT
@@ -77,32 +77,40 @@ ENDMODULE.
 *  &---------------------------------------------------------------------*
 *         text
 *  ----------------------------------------------------------------------*
-  MODULE USER_COMMAND_0003 INPUT.
+MODULE USER_COMMAND_0003 INPUT.
 
-    IF OKCODE_002 EQ 'FCT_EXIT2'.
-      LEAVE PROGRAM.
-    ENDIF.
+  IF OKCODE_002 EQ 'FCT_EXIT2'.
+    LEAVE PROGRAM.
+  ENDIF.
 
-    IF OKCODE_002 EQ 'FCT_SUBMIT'.
-      APPEND LS_CLIENT TO LT_CLIENT.
-      MODIFY ZPROJECT001 FROM TABLE LT_CLIENT.
-    ENDIF.
+  IF OKCODE_002 EQ 'FCT_SUBMIT'.
+    APPEND LS_CLIENT TO LT_CLIENT.
+    MODIFY ZPROJECT001 FROM TABLE LT_CLIENT.
+  ENDIF.
 
-    IF OKCODE_002 EQ 'FCT_DISPLAY'.
+  IF OKCODE_002 EQ 'FCT_DISPLAY'.
 
-      SELECT * FROM ZPROJECT001 INTO TABLE LT_CLIENT.
+    SELECT * FROM ZPROJECT001 INTO TABLE LT_CLIENT.
 
-      CALL METHOD CL_SALV_TABLE=>FACTORY
-        IMPORTING
-          R_SALV_TABLE = REPORTALV
-        CHANGING
-          T_TABLE      = LT_CLIENT.
+    CALL METHOD CL_SALV_TABLE=>FACTORY
+      IMPORTING
+        R_SALV_TABLE = REPORTALV
+      CHANGING
+        T_TABLE      = LT_CLIENT.
 
-        FUNCTIONS = REPORTALV->GET_FUNCTIONS( ).
-        FUNCTIONS->SET_ALL( ABAP_TRUE ).
+    FUNCTIONS = REPORTALV->GET_FUNCTIONS( ).
+    FUNCTIONS->SET_ALL( ABAP_TRUE ).
 
-        CALL METHOD REPORTALV->DISPLAY( ).
+    CALL METHOD REPORTALV->DISPLAY( ).
 
-      ENDIF.
+  ENDIF.
 
-  ENDMODULE.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  FCT_EXIT2  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE FCT_EXIT2 INPUT.
+
+ENDMODULE.
