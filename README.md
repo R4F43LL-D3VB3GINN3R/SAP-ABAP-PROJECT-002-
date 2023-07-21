@@ -16,7 +16,7 @@ In case of authentication failure, display a message indicating the remaining nu
 After successful login, redirect the user to the employee registration screen.
 Employee Registration Screen:
 
-The employee registration screen should have the following fields: Name, Position, Date of Birth, and Department.
+The employee registration screen should have the following fields: ID, Name, Surname, Address and Phone.
 The system should validate whether all mandatory fields have been filled before saving the registration.
 Upon successful registration, display a confirmation message and clear the fields for a new registration.
 Display of Registered Employees Screen:
