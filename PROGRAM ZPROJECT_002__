@@ -79,16 +79,24 @@ ENDMODULE.
 *  ----------------------------------------------------------------------*
 MODULE USER_COMMAND_0003 INPUT.
 
-  IF OKCODE_002 EQ 'FCT_EXIT2'.
-    LEAVE PROGRAM.
-  ENDIF.
-
   IF OKCODE_002 EQ 'FCT_SUBMIT'.
     APPEND LS_CLIENT TO LT_CLIENT.
     MODIFY ZPROJECT001 FROM TABLE LT_CLIENT.
   ENDIF.
 
-  IF OKCODE_002 EQ 'FCT_DISPLAY'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  FCT_EXIT2  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE FCT_EXIT2 INPUT.
+
+ IF OKCODE_002 EQ 'FCT_EXIT2'.
+    LEAVE PROGRAM.
+  ENDIF.
+
+    IF OKCODE_002 EQ 'FCT_DISPLAY'.
 
     SELECT * FROM ZPROJECT001 INTO TABLE LT_CLIENT.
 
@@ -104,13 +112,5 @@ MODULE USER_COMMAND_0003 INPUT.
     CALL METHOD REPORTALV->DISPLAY( ).
 
   ENDIF.
-
-ENDMODULE.
-*&---------------------------------------------------------------------*
-*&      Module  FCT_EXIT2  INPUT
-*&---------------------------------------------------------------------*
-*       text
-*----------------------------------------------------------------------*
-MODULE FCT_EXIT2 INPUT.
 
 ENDMODULE.
